@@ -1,0 +1,18 @@
+{
+  "IrCamera": {
+    "res_x": 640,
+    "res_y": 480
+  },
+  "ThermalCamera": {
+    "MovementSensitivity": 0,
+    "MovementSize": 1.5,
+    "OnSensitivity": 5,
+    "OffSensitivity": 30,
+    "BufferSize": 10
+  },
+  "Device": {
+    "Group": "",
+    "Name": "",
+    "ServerUrl": "http://192.168.20.2:8888"
+  }
+}
