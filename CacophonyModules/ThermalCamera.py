@@ -7,6 +7,8 @@ import cPickle
 import time
 import Image
 import cv2
+import Util
+
 i = 1
 class Camera:
     previousFrame = None
@@ -27,6 +29,10 @@ class Camera:
     startTime = None
     duration = None
     outputF = None
+
+    startTimestampString = None
+    startTimeString = None
+
 
     def __init__(self, config):
         """ Inits lepton module. """
@@ -89,6 +95,8 @@ class Camera:
         self.npyFile = open(join(self.recordingFolder, '001.npy'), 'w')
         self.recording = True
         self.startTime = time.time()
+        self.startTimestampString = Util.datetimestamp()
+        self.startTimeString = Util.timestamp()
 
     def stop_recording(self):
         self.npyFile.close()
@@ -146,7 +154,9 @@ class Camera:
 
     def get_meta(self):
         metadata = {
-            "duration": int(self.duration)
+            "duration": int(self.duration),
+            "recordingDateTime": self.startTimestampString,
+            "recordingTime": self.startTimeString
             }
         return metadata
 
@@ -172,4 +182,5 @@ def save_rgb_as_image(rgb, n, folder):
     im = Image.fromarray(rgb, "RGB")
     imName = str(n).zfill(6) + '.png'
     im.save(join(folder, imName))
+
 
