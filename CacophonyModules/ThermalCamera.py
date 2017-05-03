@@ -5,9 +5,9 @@ import os
 import numpy as np
 import cPickle
 import time
-from PIL import Image
+import Image
 import cv2
-
+i = 1
 class Camera:
     previousFrame = None
     previousId = None
@@ -151,40 +151,25 @@ class Camera:
         return metadata
 
 def process_frame_to_rgb(frame):
-    # Process frame to rgb image
-    frame = cv2.normalize(frame, frame, 0, 65535, cv2.NORM_MINMAX)
-    im = Image.new("RGB", (80, 60))
-    rgb = []
-    for i in frame:
-        for j in i:
-            rgb.append(get_heat_rgb(j/65535.0))
+    a = np.zeros((60, 80))
+    a = cv2.normalize(frame, a, 0, 65535, cv2.NORM_MINMAX) 
+    maximum = np.amax(a)
+    minimum = np.amin(a)
+    m1 = 0.25*65535
+    m2 = 0.50*65535
+    m3 = 0.75*65535
+    b1 = np.where(a <=m1, 1, 0)
+    b2 = np.where(np.bitwise_and(m1 < a, a <=m2), 1, 0)
+    b3 = np.where(np.bitwise_and(m2 < a, a <=m3), 1, 0)
+    b4 = np.where(m3 < a, 1, 0)
+    rgb = np.zeros((60, 80, 3), 'uint8')
+    rgb[..., 0] = ((a-0.5*65535)*255*4/65535.0*b3 + b4*255)
+    rgb[..., 1] = (b2*255 + b3*255 + b1*255*a*4/65535.0 + b4*255*((65535.0-a)*4/65535.0))
+    rgb[..., 2] = (b1*255 + b2*255*((0.5*65535.0-a)*4)/65535.0 )
     return rgb
 
-def get_heat_rgb(n):
-    if (n >= 0 and n < 0.25):
-        r = 0
-        g = n*4*255
-        b = 255
-    elif (n < 0.5):
-        r = 0
-        g = 255
-        b = 255-((n-0.25)*4*255)
-    elif (n < 0.75):
-        r = (n-0.5)*4*255
-        b = 0
-        g = 255
-    elif (n <= 1):
-        r = 255
-        g = 255-(n-0.75)*4*255
-        b = 0
-    else:
-        print('Error: number out or range, should be from 0-1')
-        return 0, 0, 0
-    return int(r), int(g), int(b)
-
 def save_rgb_as_image(rgb, n, folder):
-    im = Image.new("RGB", (80, 60))
-    im.putdata(rgb)
+    im = Image.fromarray(rgb, "RGB")
     imName = str(n).zfill(6) + '.png'
     im.save(join(folder, imName))
 
