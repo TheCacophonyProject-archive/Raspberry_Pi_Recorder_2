@@ -32,6 +32,7 @@ class Camera:
 
     startTimestampString = None
     startTimeString = None
+    max_len = None
 
 
     def __init__(self, config):
@@ -44,6 +45,7 @@ class Camera:
         self.moveSize = config["ThermalCamera"]["MovementSize"]
         self.onSen =    config["ThermalCamera"]["OnSensitivity"]
         self.offSen =   config["ThermalCamera"]["OffSensitivity"]
+        self.max_len =  config["ThermalCamera"]["MaxLen"]
         self.frame_buffer = deque(maxlen=config["ThermalCamera"]["BufferSize"])
         
 
@@ -87,6 +89,10 @@ class Camera:
         elif not self.detection and self.onCount >= self.onSen:
             print('Detection on.')
             self.detection = True
+
+        if (self.recording and time.time()-self.startTime >= self.max_len):
+            print("Max recording duration.")
+            self.detection = False
 
 
     def start_recording(self, folder):

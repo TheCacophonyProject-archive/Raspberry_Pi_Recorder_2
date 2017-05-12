@@ -8,7 +8,8 @@
     "MovementSize": 1.5,
     "OnSensitivity": 5,
     "OffSensitivity": 30,
-    "BufferSize": 10
+    "BufferSize": 10,
+    "MaxLen": 120
   },
   "Device": {
     "Group": "",
