@@ -14,8 +14,9 @@ def post_processing(thermalCamera, irCamera, device, queue):
         queue.put(('NEW_JWT', jwt))
 
     # Do required post processing
-    thermalCamera.post_process()
-    irCamera.post_process()
+    d = thermalCamera.post_process()
+    print(d)
+    irCamera.post_process(d)
 
     # Get files and metadata to upload.
     files = {

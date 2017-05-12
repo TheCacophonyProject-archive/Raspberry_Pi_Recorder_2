@@ -5,7 +5,7 @@ import os
 import numpy as np
 import cPickle
 import time
-import Image
+from PIL import Image
 import cv2
 import Util
 
@@ -142,12 +142,14 @@ class Camera:
 
         # Render to AVI
         inputF = join(imageFolder, "%06d.png")
-        self.outputF = join(self.recordingFolder, "file.avi")
-        fps = (self.frames+bufferLen)/self.duration
-        command = "/usr/local/bin/ffmpeg -r {f} -i {i} {o}".format(
+        self.outputF = join(self.recordingFolder, "file.mp4")
+        fps = (self.frames)/self.duration
+        command = "avconv -loglevel error -r {f} -i {i} {o}".format(
             f = fps, i = inputF, o = self.outputF)
         print(command)
         os.system(command)
+
+        return (bufferLen/fps)
 
     def get_file(self):
         return self.outputF
