@@ -15,13 +15,17 @@ CONFIG_FILE = 'config.json'
 PRIVATE_SETTINGS = 'private'
 RECORDINGS_FOLDER = 'recordings'
 
+fileDir = os.path.dirname(os.path.realpath(__file__))
+
 def init():
-    with open(CONFIG_FILE, 'r') as f:
+    print("Init new IR Camera, Thermal Camera, and Device.")
+    with open(join(fileDir, CONFIG_FILE), 'r') as f:
         config = json.load(f)
-        print(config)
+        #print(config)
         ir_camera = IrCamera.Camera(config)
         thermal_camera = ThermalCamera.Camera(config)
-        device = Device.device(config, PRIVATE_SETTINGS)
+        device = Device.device(config, join(fileDir, PRIVATE_SETTINGS))
+    print("Init finished.")
     return ir_camera, thermal_camera, device
 
 def save_new_settings(settings):
@@ -63,7 +67,7 @@ with Lepton() as l:
         if not recording and thermal_camera.detection:
             # Make recording folder
             recordingTimeMillis = int(floor(time.time()*1000))
-            recordingFolder = join(RECORDINGS_FOLDER, str(recordingTimeMillis)) 
+            recordingFolder = join(fileDir, RECORDINGS_FOLDER, str(recordingTimeMillis)) 
             os.makedirs(recordingFolder)
             recording = True
             thermal_camera.start_recording(recordingFolder)

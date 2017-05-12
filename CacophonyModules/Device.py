@@ -14,7 +14,6 @@ class device:
     privateSettingsFile = None
     
     def __init__(self, config, privateSettingsFile):
-        print("Device init.")
         # Save config settings
         if "Device" not in config:
             print("Error, no 'Device' in config.")
@@ -46,7 +45,6 @@ class device:
             self.get_new_jwt()
         else:
             self.register()
-        print("Device init finished.")
 
     def get_new_jwt(self):
         # Check that we have devicename and password to get new jwt

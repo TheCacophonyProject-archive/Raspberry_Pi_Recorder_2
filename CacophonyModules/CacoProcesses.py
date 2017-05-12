@@ -16,7 +16,6 @@ def post_processing(thermalCamera, irCamera, device, queue):
 
     # Do required post processing
     d = thermalCamera.post_process()
-    print(d)
     irCamera.post_process(d)
 
     # Get files and metadata to upload.
@@ -34,7 +33,7 @@ def post_processing(thermalCamera, irCamera, device, queue):
     headers = {'authorization': device.privateSettings['jwt']}
     try:
         r = requests.post(url, files = files, data = data, headers = headers)
-        print(r.status_code)
+        print("Upload request finished with status: " + str(r.status_code))
         
     except Exception as e:
         print(e)

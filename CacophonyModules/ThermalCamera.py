@@ -152,7 +152,7 @@ class Camera:
         fps = (self.frames)/self.duration
         command = "avconv -loglevel error -r {f} -i {i} {o}".format(
             f = fps, i = inputF, o = self.outputF)
-        print(command)
+        #print(command)
         os.system(command)
 
         return (bufferLen/fps)

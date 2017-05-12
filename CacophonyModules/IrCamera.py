@@ -67,21 +67,21 @@ class Camera:
         blankPath = join(self.folder, 'blank.mp4')
         command = "avconv -loglevel error -loop 1 -r {f} -t {t} -i {i} {o}".format(
             f = self.fps, t = bufferDuration, i = imagePath, o = blankPath)
-        print(command)
+        #print(command)
         os.system(command)
 
         # Render h264 to mp4
         self.mp4Vid = join(self.folder, 'vid.mp4')
         command = "avconv -loglevel error -r {f} -i {i} {o}".format(
             f = self.fps, i = self.filePath, o = self.mp4Vid)
-        print(command)
+        #print(command)
         os.system(command)
         
         # Render still and h264 together.
         self.final = join(self.folder, 'final.mp4')
-        command = "MP4Box -add {s} -cat {v} {o}".format(
+        command = "MP4Box -quiet -add {s} -cat {v} {o}".format(
             s = blankPath, v = self.mp4Vid, o = self.final)
-        print(command)
+        #print(command)
         os.system(command)
 
         print("IrCamera post process finished")
