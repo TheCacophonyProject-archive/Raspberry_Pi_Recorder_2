@@ -3,6 +3,7 @@ RECORDINGS_FOLDER_MAX_SIZE = 2000
 
 import json
 import requests
+import shutil
 
 def post_processing(thermalCamera, irCamera, device, queue):
     # Get JWT from device. If device does not have a JWT yet then get a new JWT
@@ -38,3 +39,6 @@ def post_processing(thermalCamera, irCamera, device, queue):
     except Exception as e:
         print(e)
         print("Error with uploading files.")
+
+    # Remove recording
+    shutil.rmtree(thermalCamera.recordingFolder)
