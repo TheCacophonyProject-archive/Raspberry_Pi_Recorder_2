@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import cv2
 from pylepton import Lepton
 import numpy as np
