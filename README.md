@@ -17,27 +17,27 @@ before altering the license to MIT, however if we are unable to contact
 contributors readily, we will assume consent.
 
 ## Setup
-`sudo apt-get update`
+`sudo apt-get update`  
 `sudo apt-get install gpac libav-tools python-opencv python-numpy`
 
-Install pylepton, used for thermal camera.
+Install pylepton, used for thermal camera.  
 `git clone https://github.com/groupgets/pylepton.git`  
 `cd pylepton/`  
 `sudo python setup.py install`
 
 Enable camera, SPI, I2C, and change Timezone on the Raspberry Pi.
 
-Clone config file and set params.   
-`cd Raspberry_Pi_Recorder_2`    
-`cp config_TEMPLATE.json config.json`
-`chmod +x main.py`
+Clone config file and set params.     
+`cd Raspberry_Pi_Recorder_2`      
+`cp config_TEMPLATE.json config.json`  
+`chmod +x main.py`  
 
 Run main.py to start app.
 
 ## Start on reboot
-This will start a screen session running the app on reboot.
+This will start a screen session running the app on reboot.  
 
-`sudo apt-get install screen`
-`crontab -e`
-Add this task to cron
+`sudo apt-get install screen`  
+`crontab -e`  
+Add this task to cron  
 `@reboot /usr/bin/screen -dmS ThermalRecorder /home/pi/Raspberry_Pi_Recorder_2/main.py`
