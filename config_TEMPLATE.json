@@ -1,7 +1,11 @@
 {
+  "Main": {
+    "MaxRecordingLen": 600,
+    "MaxWaitTime": 3600
+  },
   "IrCamera": {
-    "res_x": 640,
-    "res_y": 480
+    "res_x": 320,
+    "res_y": 240
   },
   "ThermalCamera": {
     "MovementSensitivity": 0,

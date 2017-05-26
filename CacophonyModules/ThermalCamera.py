@@ -24,7 +24,7 @@ class Camera:
     offSen = None
     onCount = 0
     offCount = 0
-    detection = False
+    detection = None
     frames = 0
     startTime = None
     duration = None
@@ -90,9 +90,9 @@ class Camera:
             print('Detection on.')
             self.detection = True
 
-        if (self.recording and time.time()-self.startTime >= self.max_len):
-            print("Max recording duration.")
-            self.detection = False
+        #if (self.recording and time.time()-self.startTime >= self.max_len):
+        #    print("Max recording duration.")
+        #    self.detection = False
 
 
     def start_recording(self, folder):

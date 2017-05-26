@@ -27,7 +27,7 @@ def init():
         thermal_camera = ThermalCamera.Camera(config)
         device = Device.device(config, join(fileDir, PRIVATE_SETTINGS))
     print("Init finished.")
-    return ir_camera, thermal_camera, device
+    return ir_camera, thermal_camera, device, config['Main']['MaxRecordingLen'], config['Main']['MaxWaitTime']
 
 def save_new_settings(settings):
     with open(CONFIG_FILE, 'w') as configFile:
@@ -35,11 +35,13 @@ def save_new_settings(settings):
 
 
 # Setup
-ir_camera, thermal_camera, device = init()
+ir_camera, thermal_camera, device, maxRecordingLen, maxWaitTime = init()
 queue = Queue()
 recording = False
 newSettingsFlag = False
 newSettingsData = None
+recordingStartTime = None
+overMaxRecordingLen = None
 
 with Lepton() as l:
     while True:
@@ -64,18 +66,24 @@ with Lepton() as l:
         # Get new thermal frame
         thermal_camera.new_frame(l)
 
+
+        if recordingStartTime and time.time()-recordingStartTime >= maxRecordingLen:
+            overMaxRecordingLen = True
+            print("Max recording len. Stopping recording.")
+
         # Starting recording
-        if not recording and thermal_camera.detection:
+        if not recording and thermal_camera.detection and not overMaxRecordingLen:
+            print("Starting recording.")
             # Make recording folder
-            recordingTimeMillis = int(floor(time.time()*1000))
-            recordingFolder = join(fileDir, RECORDINGS_FOLDER, str(recordingTimeMillis)) 
+            recordingStartTime = time.time()
+            recordingFolder = join(fileDir, RECORDINGS_FOLDER, str(int(recordingStartTime)))
             os.makedirs(recordingFolder)
             recording = True
             thermal_camera.start_recording(recordingFolder)
             ir_camera.start_recording(recordingFolder)
 
         # Stoping recording
-        if recording and not thermal_camera.detection:
+        if (recording and not thermal_camera.detection) or overMaxRecordingLen:
             recording = False
             thermal_camera.stop_recording()
             ir_camera.stop_recording()
@@ -85,4 +93,18 @@ with Lepton() as l:
             if newSettingsFlag:
                 newSettingsFlag = False
                 save_new_settings(newSettings)
-            ir_camera, thermal_camera, device = init()
+
+            # Wait for thermal camera to stop detection.
+            if thermal_camera.detection:
+                print("Waiting fot detection to stop before starting again")
+            stopTime = time.time()
+            while thermal_camera.detection and time.time()-stopTime < maxWaitTime:
+                thermal_camera.new_frame(l)
+            if not thermal_camera.detection:
+                print("Detection stopped.")
+            else:
+                print("Max stop time exceded.")
+            overMaxRecordingLen = False
+            
+            ir_camera, thermal_camera, device, maxRecordingLen, maxWaitTime = init()
+            recordingStartTime = None
