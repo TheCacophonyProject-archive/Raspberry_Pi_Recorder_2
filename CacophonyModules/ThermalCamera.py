@@ -33,6 +33,7 @@ class Camera:
     startTimestampString = None
     startTimeString = None
     max_len = None
+    diffSen = None
 
 
     def __init__(self, config):
@@ -40,14 +41,15 @@ class Camera:
         self.previousFrame = None
         self.previousId = None
 
-        
+
         self.moveSen =  config["ThermalCamera"]["MovementSensitivity"]
         self.moveSize = config["ThermalCamera"]["MovementSize"]
         self.onSen =    config["ThermalCamera"]["OnSensitivity"]
         self.offSen =   config["ThermalCamera"]["OffSensitivity"]
         self.max_len =  config["ThermalCamera"]["MaxLen"]
         self.frame_buffer = deque(maxlen=config["ThermalCamera"]["BufferSize"])
-        
+        self.diffSen =  config["ThermalCamera"]["DiffSen"]
+
 
     def new_frame(self, lepton):
         # Set current frame to previous frame
@@ -65,10 +67,10 @@ class Camera:
         else:
             self.frame_buffer.append(self.currentFrame)
 
-        # Detection from 2 frames 
+        # Detection from 2 frames
         frameDetection = False
         diff = np.amax(self.currentFrame)-np.amin(self.currentFrame)
-        if diff > 250:
+        if diff > self.diffSen:
             frameDetection = True
        # print(frameDetection)
 
@@ -109,7 +111,7 @@ class Camera:
         self.stop_recording = False
         self.recording = False
         self.duration = time.time()-self.startTime
-        
+
     def save_metadata(self):
         """ Saves the metadata of the recording to file. """
         #TODO save apropriate data.
@@ -170,7 +172,7 @@ class Camera:
 
 def process_frame_to_rgb(frame):
     a = np.zeros((60, 80))
-    a = cv2.normalize(frame, a, 0, 65535, cv2.NORM_MINMAX) 
+    a = cv2.normalize(frame, a, 0, 65535, cv2.NORM_MINMAX)
     maximum = np.amax(a)
     minimum = np.amin(a)
     m1 = 0.25*65535
@@ -190,5 +192,3 @@ def save_rgb_as_image(rgb, n, folder):
     im = Image.fromarray(rgb, "RGB")
     imName = str(n).zfill(6) + '.png'
     im.save(join(folder, imName))
-
-
