@@ -5,12 +5,15 @@ import numpy as np
 import time
 from multiprocessing import Process, Queue
 from CacophonyModules import CacoProcesses, IrCamera, ThermalCamera, Device
+from CacophonyModules.IrLights import IR_Lights
 from collections import deque
 from os.path import join
 import picamera
 import os
 import json
 from math import floor
+
+IR_Lights.init()
 
 CONFIG_FILE = 'config.json'
 PRIVATE_SETTINGS = 'private'
@@ -74,6 +77,7 @@ with Lepton() as l:
         # Starting recording
         if not recording and thermal_camera.detection and not overMaxRecordingLen:
             print("Starting recording.")
+            IR_Lights.inc_over_time(10)
             # Make recording folder
             recordingStartTime = time.time()
             recordingFolder = join(fileDir, RECORDINGS_FOLDER, str(int(recordingStartTime)))
@@ -85,6 +89,7 @@ with Lepton() as l:
         # Stoping recording
         if (recording and not thermal_camera.detection) or overMaxRecordingLen:
             recording = False
+            IR_Lights.dec_over_time(10)
             thermal_camera.stop_recording()
             ir_camera.stop_recording()
             p = Process(target = CacoProcesses.post_processing,
