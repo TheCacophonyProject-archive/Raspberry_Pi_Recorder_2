@@ -7,6 +7,12 @@
     "res_x": 320,
     "res_y": 240
   },
+  "IrLights": {
+    "Active": true,
+    "PCA9685": false,
+    "PCA9685Channel": 2,
+    "RPiPin": 13
+  },
   "ThermalCamera": {
     "MovementSensitivity": 0,
     "MovementSize": 1.5,
@@ -20,5 +26,14 @@
     "Group": "",
     "Name": "",
     "ServerUrl": "http://192.168.20.2:8888"
+  },
+  "ServoControl": {
+    "Active": false,
+    "xServoChannel": 0,
+    "yServoChannel": 1
+  },
+  "PwmControl": {
+    "PCA9685": false, 
+    "PiPwmPins": [13]
   }
 }

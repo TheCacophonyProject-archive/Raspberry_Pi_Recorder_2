@@ -29,6 +29,7 @@ class Camera:
     startTime = None
     duration = None
     outputF = None
+    frameDetection = False
 
     startTimestampString = None
     startTimeString = None
@@ -68,14 +69,14 @@ class Camera:
             self.frame_buffer.append(self.currentFrame)
 
         # Detection from 2 frames
-        frameDetection = False
+        self.frameDetection = False
         diff = np.amax(self.currentFrame)-np.amin(self.currentFrame)
         if diff > self.diffSen:
-            frameDetection = True
+            self.frameDetection = True
        # print(frameDetection)
 
         #
-        if frameDetection:
+        if self.frameDetection:
             self.onCount += 1
             self.offCount = 0
         else:

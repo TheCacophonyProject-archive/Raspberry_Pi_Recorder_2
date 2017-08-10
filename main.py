@@ -5,7 +5,7 @@ import numpy as np
 import time
 from multiprocessing import Process, Queue
 from CacophonyModules import CacoProcesses, IrCamera, ThermalCamera, Device
-from CacophonyModules.IrLights import IR_Lights
+from CacophonyModules.PWM_Control import X_Y_Control, IR_Lights, PWM
 from collections import deque
 from os.path import join
 import picamera
@@ -13,13 +13,17 @@ import os
 import json
 from math import floor
 
-IR_Lights.init()
-
 CONFIG_FILE = 'config.json'
 PRIVATE_SETTINGS = 'private'
 RECORDINGS_FOLDER = 'recordings'
 
 fileDir = os.path.dirname(os.path.realpath(__file__))
+
+with open(join(fileDir, CONFIG_FILE), 'r') as f:
+    config = json.load(f)
+    PWM.init(config)
+    IR_Lights.init(config)
+    X_Y_Control.init(config)
 
 def init():
     print("Init new IR Camera, Thermal Camera, and Device.")
@@ -69,6 +73,11 @@ with Lepton() as l:
         # Get new thermal frame
         thermal_camera.new_frame(l)
 
+        if thermal_camera.frameDetection:
+            X_Y_Control.new_frame(thermal_camera.currentFrame)
+        else:
+            # Stops servos 'buzzing' noise
+            X_Y_Control.move_x_y(0, 0)
 
         if recordingStartTime and time.time()-recordingStartTime >= maxRecordingLen:
             overMaxRecordingLen = True
