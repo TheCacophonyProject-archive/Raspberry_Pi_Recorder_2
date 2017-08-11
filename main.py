@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import cv2
-from pylepton import Lepton
+from pylepton.Lepton3 import Lepton3
 import numpy as np
 import time
 from multiprocessing import Process, Queue
@@ -50,7 +50,7 @@ newSettingsData = None
 recordingStartTime = None
 overMaxRecordingLen = None
 
-with Lepton() as l:
+with Lepton3() as l:
     while True:
         #Check to see if there are any new messages in the queue.
         if not queue.empty():

@@ -60,7 +60,7 @@ class Camera:
         # Capure until the camera returns a new frame.
         while self.previousId == self.currentId:
             self.currentFrame, self.currentId = lepton.capture()
-        self.currentFrame = np.resize(self.currentFrame, (60, 80))
+        self.currentFrame = np.resize(self.currentFrame, (120, 160))
 
         if self.recording:
             self.frames += 1
@@ -129,7 +129,7 @@ class Camera:
             bufferLen += 1
 
         # Make npz object to be compressed
-        npz = np.zeros((self.frames+bufferLen, 60, 80))
+        npz = np.zeros((self.frames+bufferLen, 120, 160))
 
         # Make image folder
         imageFolder = join(self.recordingFolder, 'images')
@@ -172,7 +172,7 @@ class Camera:
         return metadata
 
 def process_frame_to_rgb(frame):
-    a = np.zeros((60, 80))
+    a = np.zeros((120, 160))
     a = cv2.normalize(frame, a, 0, 65535, cv2.NORM_MINMAX)
     maximum = np.amax(a)
     minimum = np.amin(a)
@@ -183,7 +183,7 @@ def process_frame_to_rgb(frame):
     b2 = np.where(np.bitwise_and(m1 < a, a <=m2), 1, 0)
     b3 = np.where(np.bitwise_and(m2 < a, a <=m3), 1, 0)
     b4 = np.where(m3 < a, 1, 0)
-    rgb = np.zeros((60, 80, 3), 'uint8')
+    rgb = np.zeros((120, 160, 3), 'uint8')
     rgb[..., 0] = ((a-0.5*65535)*255*4/65535.0*b3 + b4*255)
     rgb[..., 1] = (b2*255 + b3*255 + b1*255*a*4/65535.0 + b4*255*((65535.0-a)*4/65535.0))
     rgb[..., 2] = (b1*255 + b2*255*((0.5*65535.0-a)*4)/65535.0 )
