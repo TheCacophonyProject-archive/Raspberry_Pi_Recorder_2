@@ -17,9 +17,13 @@ class Camera:
     folder = None
     res_y = None
     res_x = None
+    active = False
 
     def __init__(self, config):
         """ Inits the camera setting the resolution. """
+        self.active = config['IrCamera']['active']
+        if not self.active:
+            return
         self.res_x = config['IrCamera']['res_x']
         self.res_y = config['IrCamera']['res_y']
         self.camera = picamera.PiCamera()
@@ -29,6 +33,8 @@ class Camera:
 
     def start_recording(self, folder):
         """ Starts recording into the folder given. """
+        if not self.active:
+            return
         if self.recording:
             print('ERROR: Device is already recording.')
             return
@@ -40,6 +46,8 @@ class Camera:
         self.startTime = time.time()
 
     def stop_recording(self):
+        if not self.active:
+            return
         if not self.recording:
             print('ERROR: Device is already not recording.')
             return
@@ -50,11 +58,15 @@ class Camera:
         
     def save_metadata(self):
         """ Saves the metadata of the recording to file. """
+        if not self.active:
+            return
         #TODO save apropriate data.
         with open(join(recordingFolder, 'irMeta'), 'w') as f:
             pickle.dump(data, f)
 
     def post_process(self, bufferDuration):
+        if not self.active:
+            return
         print("IrCamera post process")
 
         # Create black image at save res as picamera

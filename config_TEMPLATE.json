@@ -4,6 +4,7 @@
     "MaxWaitTime": 3600
   },
   "IrCamera": {
+    "active": false,
     "res_x": 320,
     "res_y": 240
   },
